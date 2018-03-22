@@ -8,17 +8,19 @@ setTimeout(function () {
 
     var hrefNext = jQuery('li.active').next().find('a').attr('href')
 
+    exportTableToCSV(getPartFileName);
+
     if(jQuery('li.active').next().hasClass('disabled') === false){
 
-        exportTableToCSV(getPartFileName);
-
-        if(hrefNext === 'undefined'){
-            setTimeout(function () {
+        setTimeout(function () {
+            if(hrefNext === 'undefined'){
+                setTimeout(function () {
+                    document.location.href = jQuery('li.active').next().find('a').attr('href') + '&filename=' + getPartFileName
+                }, 5000)
+            }else{
                 document.location.href = jQuery('li.active').next().find('a').attr('href') + '&filename=' + getPartFileName
-            }, 5000)
-        }else{
-            document.location.href = jQuery('li.active').next().find('a').attr('href') + '&filename=' + getPartFileName
-        }
+            }
+        }, 2000)
 
     }
 
@@ -45,8 +47,14 @@ function exportTableToCSV(partFilename) {
             $cols = $row.find('td');
 
         return $cols.map(function(j, col) {
-            var $col = $(col),
-                text = $col.text();
+            var $col = $(col)
+
+            var text = $col.text()
+
+            //check this col is the color icon
+            if($col.attr('class').search('color') !== -1){
+                text = $col.find('a').attr('title')
+            }
 
             return text.replace(/"/g, '""'); // escape double quotes
 
